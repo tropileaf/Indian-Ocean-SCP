@@ -16,7 +16,7 @@
 #' 
 #' To use this code, you will need to download and expand `MME1DATA-Q1215/SpatialPlanning/Data.zip` to the directory `GitHub/SpatialPlanning/Data/`. Note that this version does not use Aquamaps.
 #' 
-#' Contact: Lea Fourchault or Jason D. Everett or Camille K. V. Buenafe from the MME at UQ.
+#' Contact: Lea Fourchault or Jason D. Everett or Kristine C. V. Buenafe from the MME at UQ.
 #' 
 #' ## Preliminaries 
 #' 
@@ -34,15 +34,15 @@ cCRS <- "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs" # Mol
 world <- ne_countries(scale = "medium", returnclass = "sf")%>%
   st_transform(cCRS) # apply Mollweide projection to background worldmap
 
-saveRDS(world, paste0("~/Documents/MscThesis/GitHub/SpatialPlanning/rds", "world.rds"))
+saveRDS(world, paste0("~/Documents/SpatialPlanning/rds", "world.rds"))
 
 Region <- c(xmin = 18, xmax = 120, ymin = -45, ymax = 34) # Indian Ocean, adjusted to include ecological data of interest and exclude low-quality fishing cost data
-Bndry <- fSpatPlan_Get_Boundary(Region, cCRS) # boundary of plannin region
+Bndry <- fSpatPlan_Get_Boundary(Region, cCRS) # boundary of planning region
 
 #' Intersect bndry and high seas (ABNJ)
 
-ABNJ <- st_read ("~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/World_High_Seas_v1/High_Seas_v1.shp") 
-ABNJMoll <- st_transform(ABNJ, cCRS) # Apply Mollweide projection to ABNJ. In subsequent lines, does not work when using %>%
+ABNJ <- st_read ("~/Documents/SpatialPlanning/Shp/World_High_Seas_v1/High_Seas_v1.shp") 
+ABNJMoll <- st_transform(ABNJ, cCRS) # apply Mollweide projection to ABNJ. 
 ABNJMollBuff  <- st_buffer(ABNJMoll, 0) # need to create buffer of 0 to avoid Error in CPL_geos_op2(op, x, y) : Evaluation error: TopologyException: Input geom 0 is invalid: Self-intersection at or near point -> overwrite offending geometries
 BndryABNJ <- st_intersection(ABNJMollBuff, Bndry)
 
@@ -54,7 +54,7 @@ PU_size <- 1000 # in km2 at the surface
 Shape <- "hexagon" # shape of PUs
 PUs <- fSpatPlan_Get_PlanningUnits(BndryABNJ, world, PU_size, Shape) # modified PUs with ABNJ only
 
-saveRDS(PUs, paste0("~/Documents/MscThesis/GitHub/SpatialPlanning/rds", "PUs.rds"))
+saveRDS(PUs, paste0("~/Documents/SpatialPlanning/rds", "PUs.rds"))
 
 #' Plot PUs
 
@@ -84,7 +84,7 @@ return(Polyg1PUs)
 #' Important Bird Areas
 
 #loading file 
-IBA <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/IBAs/MarineIBA_IndianOcean.shp" # no need to st_transform here because done in function when crossing with PUs
+IBA <- "~/Documents/SpatialPlanning/Shp/Biodiv_features/IBAs/MarineIBA_IndianOcean.shp" # no need to st_transform here because done in function when crossing with PUs
 
 #crossing shp & PUs
 PUxIBA <- fSpatPlan_Get_Polyg(IBA, PUs)  
@@ -94,7 +94,7 @@ PUs <- PUs %>%
 #' Important Marine Mammal Areas
 
 #loading file
-IMMA <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/IMMAs/iucn-imma.shp"
+IMMA <- "~/Documents/SpatialPlanning/Shp/Biodiv_features/IMMAs/iucn-imma.shp"
 
 #crossing shp & PUs
 PUxIMMA <- fSpatPlan_Get_Polyg(IMMA, PUs)  
@@ -103,74 +103,74 @@ PUs <- PUs %>%
 
 #' Ecologically & Biologically Significant Areas
 
-NEIO_09<- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/EBSAs/NEIO_9_EBSA/NEIO_9_EBSA.shp"
+NEIO_09<- "~/Documents/SpatialPlanning/Shp/Biodiv_features/EBSAs/NEIO_9_EBSA/NEIO_9_EBSA.shp"
 PUxNEIO_09 <- fSpatPlan_Get_Polyg(NEIO_09, PUs)  
 PUs <- PUs %>% 
   mutate(NEIO_09 = PUxNEIO_09) # Sumatra Upwelling Zone
 
-NWIO_14 <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/EBSAs/NWIO_14_EBSA/NWIO_14_EBSA.shp"
+NWIO_14 <- "~/Documents/SpatialPlanning/Shp/Biodiv_features/EBSAs/NWIO_14_EBSA/NWIO_14_EBSA.shp"
 PUxNWIO_14 <- fSpatPlan_Get_Polyg(NWIO_14, PUs)  
 PUs <- PUs %>% 
   mutate(NWIO_14 = PUxNWIO_14) # Arabian Oxygen Min Zone
 
-SIO_11 <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_11_EBSA-GIS shapefile/SIO_11_EBSA.shp"
+SIO_11 <- "~/Documents/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_11_EBSA-GIS shapefile/SIO_11_EBSA.shp"
 PUxSIO_11 <- fSpatPlan_Get_Polyg(SIO_11, PUs)  
 PUs <- PUs %>% 
   mutate(SIO_11 = PUxSIO_11) # Agulhas Front
 
-SIO_19 <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_19_EBSA-GIS%20shapefile/SIO_19_EBSA.shp"
+SIO_19 <- "~/Documents/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_19_EBSA-GIS%20shapefile/SIO_19_EBSA.shp"
 PUxSIO_19 <- fSpatPlan_Get_Polyg(SIO_19, PUs)  
 PUs <- PUs %>% 
   mutate(SIO_19 = PUxSIO_19) # Mozambique Channel
 
-SIO_22 <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_22_EBSA-GIS shapefile/SIO_22_EBSA.shp"
+SIO_22 <- "~/Documents/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_22_EBSA-GIS shapefile/SIO_22_EBSA.shp"
 PUxSIO_22 <- fSpatPlan_Get_Polyg(SIO_22, PUs)  
 PUs <- PUs %>% 
   mutate(SIO_22 = PUxSIO_22) # Walters Shoals
 
-SIO_23 <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_23_EBSA-GIS shapefile/SIO_23_EBSA.shp"
+SIO_23 <- "~/Documents/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_23_EBSA-GIS shapefile/SIO_23_EBSA.shp"
 PUxSIO_23 <- fSpatPlan_Get_Polyg(SIO_23, PUs)  
 PUs <- PUs %>% 
   mutate(SIO_23 = PUxSIO_23) # Coral Seamount And Fracture Zone
 
-SIO_30 <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_30_EBSA-GIS shapefile/SIO_30_EBSA.shp"
+SIO_30 <- "~/Documents/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_30_EBSA-GIS shapefile/SIO_30_EBSA.shp"
 PUx_SIO30 <- fSpatPlan_Get_Polyg(SIO_30, PUs)  
 PUs <- PUs %>% 
   mutate(SIO_30 = PUx_SIO30) # Atlantis Seamount (may not be included based on Bndry)
 
-SIO_32 <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_32/SIO_32_EBSA.shp"
+SIO_32 <- "~/Documents/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_32/SIO_32_EBSA.shp"
 PUxSIO_32 <- fSpatPlan_Get_Polyg(SIO_32, PUs)  
 PUs <- PUs %>% 
   mutate(SIO_32 = PUxSIO_32) # Saya de Malha Bank
 
-SIO_35<- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_35_EBSA-GIS shapefile/SIO_35_EBSA.shp"
+SIO_35<- "~/Documents/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_35_EBSA-GIS shapefile/SIO_35_EBSA.shp"
 PUxSIO_35 <- fSpatPlan_Get_Polyg(SIO_35, PUs)  
 PUs <- PUs %>% 
   mutate(SIO_35 = PUxSIO_35) # Rusky Knoll
 
-SIO_36 <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_36_EBSA-GIS shapefile/SIO_36_EBSA.shp"
+SIO_36 <- "~/Documentsb/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_36_EBSA-GIS shapefile/SIO_36_EBSA.shp"
 PUxSIO_36 <- fSpatPlan_Get_Polyg(SIO_36, PUs)  
 PUs <- PUs %>% 
   mutate(SIO_36 = PUxSIO_36) # Fool's Flat
 
-SIO_37  <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_37_EBSA-GIS shapefile/SIO_37_EBSA.shp"
+SIO_37  <- "~/Documents/SpatialPlanning/Shp/Biodiv_features/EBSAs/SIO_37_EBSA-GIS shapefile/SIO_37_EBSA.shp"
 PUx_SIO37 <- fSpatPlan_Get_Polyg(SIO_37, PUs)  
 PUs <- PUs %>% 
   mutate(SIO_37 = PUx_SIO37) # East Broken Ridge
 
 #' Deep sea features
 
-Seamounts <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/BlueHabs/Seamounts.shp"
+Seamounts <- "~/Documents/SpatialPlanning/Shp/Biodiv_features/BlueHabs/Seamounts.shp"
 PUxSeamounts <- fSpatPlan_Get_Polyg(Seamounts, PUs)  
 PUs <- PUs %>% 
   mutate(Seamounts = PUxSeamounts)
 
-Plateaus <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/BlueHabs/Plateaus.shp"
+Plateaus <- "~/Documents/SpatialPlanning/Shp/Biodiv_features/BlueHabs/Plateaus.shp"
 PUxPlateaus <- fSpatPlan_Get_Polyg(Plateaus, PUs)  
 PUs <- PUs %>% 
   mutate(Plateaus = PUxPlateaus)
 
-Vents <- read.csv("~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Biodiv_features/vents.csv")
+Vents <- read.csv("~/Documents/SpatialPlanning/Shp/Biodiv_features/vents.csv")
 VentsActive <- filter(Vents, Activity == "active, confirmed" | Activity == "active, inferred") 
 VentsActiveSF <- st_as_sf(VentsActive, coords = c(x = "Longitude", y = "Latitude"), crs = 4326) %>% # EPSG:4326 = WGS84
   st_transform(cCRS) # apply Mollweide projection
@@ -191,10 +191,10 @@ PUxVentsInactive <- st_contains(PUs,VentsInactiveSF, sparse = FALSE) %>%
 PUs <- PUs %>% 
   mutate(Inactive_Vents = PUxVentsInactive)
 
-saveRDS(PUxVentsInactive, paste0("~/Documents/MscThesis/GitHub/SpatialPlanning/rds", "PUxVentsInactive.rds"))
-saveRDS(PUxVentsActive, paste0("~/Documents/MscThesis/GitHub/SpatialPlanning/rds", "PUxVentsActive.rds"))
+#saveRDS(PUxVentsInactive, paste0("~/Documents/MscThesis/GitHub/SpatialPlanning/rds", "PUxVentsInactive.rds"))
+#saveRDS(PUxVentsActive, paste0("~/Documents/MscThesis/GitHub/SpatialPlanning/rds", "PUxVentsActive.rds"))
 
-saveRDS(PUs, paste0("~/Documents/MscThesis/GitHub/SpatialPlanning/rds", "PUs_cons_feats.rds"))
+#saveRDS(PUs, paste0("~/Documents/MscThesis/GitHub/SpatialPlanning/rds", "PUs_cons_feats.rds"))
 
 # Check features size
 
@@ -218,17 +218,17 @@ length(PUs$Plateaus[PUs$Plateaus==TRUE]) # 1923
 
 #' ## Get the locked-out mining exploration areas and reserved areas
 
-ExplPMN <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Costs/Mining_contractors/ContractorAreas/01_pmn_exploration_areas.shp"
+ExplPMN <- "~/Documents//SpatialPlanning/Shp/Costs/Mining_contractors/ContractorAreas/01_pmn_exploration_areas.shp"
 PUxExplPMN <- fSpatPlan_Get_Polyg(ExplPMN, PUs)  
 PUs <- PUs %>% 
   mutate(ExplPMN = PUxExplPMN)
 
-ExplPMS <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Costs/Mining_contractors/ContractorAreas/02_pms_exploration_areas.shp"
+ExplPMS <- "~/Documents/SpatialPlanning/Shp/Costs/Mining_contractors/ContractorAreas/02_pms_exploration_areas.shp"
 PUxExplPMS <- fSpatPlan_Get_Polyg(ExplPMS, PUs)  
 PUs <- PUs %>% 
   mutate(ExplPMS = PUxExplPMS)
 
-ResPMN <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Costs/Mining_contractors/ContractorAreas/04_pmn_reserved_areas.shp"
+ResPMN <- "~/Documents/SpatialPlanning/Shp/Costs/Mining_contractors/ContractorAreas/04_pmn_reserved_areas.shp"
 PUxResPMN <- fSpatPlan_Get_Polyg(ResPMN, PUs)  
 PUs <- PUs %>% 
   mutate(ResPMN = PUxResPMN)
@@ -242,92 +242,90 @@ PUs["locked_out_areas"] = PUs$ExplPMN | PUs$ExplPMS | PUs$ResPMN # create locked
 #' Get CFC extent within planning region
 # script to get area modified from https://rpubs.com/rural_gis/255550
 
-#load CFC areas polygon shapefile 
-CFC <- st_read("~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Costs/Mining_resources/Crust/Crust_areas_Hein2013.shp")
+# load CFC areas polygon shapefile 
+CFC <- st_read("~/Documents//SpatialPlanning/Shp/Costs/Mining_resources/Crust/Crust_areas_Hein2013.shp")
 CFCMoll <- st_transform(CFC, cCRS) # Mollweide proj
 
-#run the intersect function, converting the output to a tibble in the process
-#int <- as_tibble(st_intersection(CFCRobin, BndryABNJ))
+# run the intersect function, converting the output to a tibble in the process
+# int <- as_tibble(st_intersection(CFCRobin, BndryABNJ))
 int <- st_intersection(CFCMoll, BndryABNJ)
 
-#add in an area count column to the tibble (area of each CFC poly in intersect layer)
+# add in an area count column to the tibble (area of each CFC poly in intersect layer)
 int$CFCarea <- st_area(int)
 
-#plot the layers to visually check result of intersect
+# plot the layers to visually check result of intersect
 plot (CFCMoll$geometry, col='green')
 plot(BndryABNJ$geometry, add=T)
 plot(int, col='red', add=T) #correct
 
-#group data by county area and calculate the total arable land area per county
-#output as new tibble
+# output as new tibble
 AreaCFCtotal <- int %>%
   summarise(areaCFCtot = sum(CFCarea)) #  2.620621e+12 [m^2] with Mollweide but = 2.256596e+12 [m^2] with Robinson
 
-#change data type of areaArable field to numeric (to remove m^2 suffix)
+# change data type of area to numeric (to remove m^2 suffix)
 AreaCFCtotal$areaCFCtot <- as.numeric(AreaCFCtotal$areaCFCtot)
 
 ## check: load county areas polygon shapefile 
 
-CFC <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Costs/Mining_resources/Crust/Crust_areas_Hein2013.shp"
+CFC <- "~/Documents/SpatialPlanning/Shp/Costs/Mining_resources/Crust/Crust_areas_Hein2013.shp"
 PUxCFC <- fSpatPlan_Get_Polyg(CFC, PUs)  
 PUs <- PUs %>% 
   mutate(CFC = PUxCFC)
 
-#'area of CFC in PUs < 2607*1000 sqkm but RECHECK
-sum(PUxCFC) #'[1] 2607 RECHECK but seems in line with result above
+#' area of CFC in PUs 2607*1000 sqkm 
+sum(PUxCFC) #'[1] 2607 seems in line with result above
 
 #' PMN value
 
-#load PMN areas polygon shapefile 
+# load PMN areas polygon shapefile 
 
-PMN <- st_read("~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Costs/Mining_resources/Nodules/Nodules_Hein2013.shp")
+PMN <- st_read("~/Documents/SpatialPlanning/Shp/Costs/Mining_resources/Nodules/Nodules_Hein2013.shp")
 PMNMoll <- st_transform(PMN, cCRS) # Mollweide proj
 
-#run the intersect function, converting the output to a tibble in the process
+# run the intersect function, converting the output to a tibble in the process
 #int <- as_tibble(st_intersection(CFCRobin, BndryABNJ))
 int2 <- st_intersection(PMNMoll, BndryABNJ)
 
-#add in an area count column to the tibble (area of each CFC poly in intersect layer)
+# add in an area count column to the tibble (area of each CFC poly in intersect layer)
 int2$PMNarea <- st_area(int2)
 
-#plot the layers to visually check result of intersect
+# plot the layers to visually check result of intersect
 plot (PMNMoll$geometry, col='green')
 plot(BndryABNJ$geometry, add=T)
 plot(int2, col='red', add=T) #correct
 
-#group data by county area and calculate the total arable land area per county
-#output as new tibble
+# output as new tibble
 AreaPMNtotal <- int2 %>%
   summarise(areaPMNtot = sum(PMNarea)) # 2.423256e+12 [m^2] with Mollweide but = 1.933646e+12 [m^2] with Robinson
 
-#change data type of areaArable field to numeric (to remove m^2 suffix)
+# change data type of area to numeric (to remove m^2 suffix)
 AreaPMNtotal$areaPMNtot <- as.numeric(AreaPMNtotal$areaPMNtot)
 
 ## check: load county areas polygon shapefile 
 
-PMN <- "~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Costs/Mining_resources/Nodules/Nodules_Hein2013.shp"
+PMN <- "~/Documents/SpatialPlanning/Shp/Costs/Mining_resources/Nodules/Nodules_Hein2013.shp"
 PUxPMN <- fSpatPlan_Get_Polyg(PMN, PUs)  
 PUs <- PUs %>% 
   mutate(PMN = PUxPMN)
 
-#'area of PMN in PUs < 2422*1000 sqkm but RECHECK
-sum(PUxPMN) #'[1] 2422 RECHECK but seems in line with result above
+#'area of PMN in PUs 2422*1000 sqkm
+sum(PUxPMN) #'[1] 2422 seems in line with result above
 
-#' Possible valuation of PMN for Indian Ocean = 320 USD/t (CRU, 2019) * 0.0056 t/sqm (Sharma et al., 2011) * 1.933646e+12 sqm (total PMN area in Indian Ocean, from shapefiles from ISA & chunk above) = USD 3.46509363e+12 for all PMN in the Indian Ocean (seems too much)
+#' Alternative valuation of PMN for Indian Ocean = 320 USD/t (CRU, 2019) but not transparent on maths behind this estimate. Best to do our own, see below.
 
 #' Get mineral shp with USD value into raster
 
 # load CFC areas polygon shapefile 
 
-sfCFC <- st_read("~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Costs/Mining_resources/Crust/Crust_areas_Hein2013.shp")%>%
+sfCFC <- st_read("~/Documents/SpatialPlanning/Shp/Costs/Mining_resources/Crust/Crust_areas_Hein2013.shp")%>%
  st_transform(cCRS) # Mollweide proj
 
-sfPMN <- st_read("~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Costs/Mining_resources/Nodules/Nodules_Hein2013.shp")%>%
+sfPMN <- st_read("~/Documents/SpatialPlanning/Shp/Costs/Mining_resources/Nodules/Nodules_Hein2013.shp")%>%
   st_transform(cCRS) # Mollweide proj
 
-# attribute average cost to mineral type (based on area covered, calculation of area explained with intersection above) + equation to get sqkm value outlined in Msc thesis
+# attribute average cost to mineral type (based on area covered, calculation of area explained with intersection above) + equation to get sqkm value outlined in thesis
 
-sfCFC$value <- 94569.447 # sqkm USD value (might depend based on estimates of metal concentration and bulk density and crust thickness, see Mitzell et al., 2022 iin Sharma, 2022; might depend on metal prices, see Li et al., 2022)
+sfCFC$value <- 94569.447 # sqkm USD value (might depend based on estimates of metal concentration and bulk density and crust thickness, see Mizell et al., 2022 in Sharma, 2022; might depend on metal prices, see Li et al., 2022)
 
 sfPMN$value <- 14307812.057 # sqkm USD value (idem)
 
@@ -340,12 +338,12 @@ rPMN <- fasterize::fasterize(sfPMN, rPUs, field = "value")
 # extract sum of all pixel values contained in each PU to get sum of USD value of all minerals
 
 PUxrCFC <- exactextractr::exact_extract(rCFC, PUs, "sum") # attribute sum of value of pixels in each PU to PU
-PUs <- PUs %>% #seems like NaN become 0s on their own?? after you click to check sfCFC and sfPMN?
+PUs <- PUs %>% #seems like NaN can become 0s? Check your df to be sure they don't.
   mutate(CFCValue = PUxrCFC)
 
 PUxrPMN <- exactextractr::exact_extract(rPMN, PUs, "sum") # attribute sum of value of pixels in each PU to PU
 PUs <- PUs %>% 
-  mutate(PMNValue = PUxrPMN) #seems like NaN become 0s on their own?? after you click to check sfCFC and sfPMN?
+  mutate(PMNValue = PUxrPMN) # NaN can become 0s, check your df.
 
 # get total mineral resource value per PU
 
@@ -355,7 +353,7 @@ max(PUs$MiningCost) # USD 14307812352, correct
 
 ##' Get the fishing-specific cost layer
 
-# the method below is the same as for shipping and mining - might be better to have consistent method to compare? also, max and mean value make more sense like this, I think, and we are sure to have the sum of values per PU
+# the method below is the same as for shipping and mining. Also, max and mean value make more sense like this and we are sure to have the sum of values per PU.
 
 FishingRaster <- terra::rast("Data/Cost/Cost_Raster_Sum.grd")
 FishingRobin <- terra::project(FishingRaster, "ESRI:54009") # transform to Mollweide proj
@@ -372,7 +370,7 @@ mean(PUs$Fishing)
 
 ##' Get the shipping-specific cost layer
 
-Shipping <- terra::rast("~/Documents/MscThesis/GitHub/SpatialPlanning/Shp/Costs/Shipping/shipping.tif")
+Shipping <- terra::rast("~/Documents/SpatialPlanning/Shp/Costs/Shipping/shipping.tif")
 ShippingRobin <- terra::project(Shipping, "ESRI:54009") # transform to Mollweide proj
 PUxShipping <- exactextractr::exact_extract(ShippingRobin, PUs, "sum") # attribute sum of value of pixels in each PU to PU
 PUs <- PUs %>% 
@@ -383,9 +381,9 @@ max(PUs$ShippingIntensity)
 mean(PUs$ShippingIntensity)
 #[1] 6336.166
 
-saveRDS(PUs, paste0("~/Documents/MscThesis/GitHub/SpatialPlanning/rds", "PUs_full.rds"))
+#saveRDS(PUs, paste0("~/Documents/SpatialPlanning/rds", "PUs_full.rds"))
 
-##' Prioritizr problems_ sector-specific plans
+##' Prioritizr problems: sector-specific plans
 
 #' FishPlan problem 
 
@@ -394,7 +392,7 @@ p_FishPlanA <- problem(PUs, features = c("IBA", "IMMA", "NEIO_09", "NWIO_14", "S
   add_relative_targets(c(0.7, 0.3, 0.3, 0.3, 0.3, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.3, 0.3, 0.68, 0.3)) %>% #inactive vents target = 0.3, active vents  = 0.68, otherwise unfeasible
   add_binary_decisions() %>%
   add_locked_out_constraints(locked_out = "locked_out_areas") %>%
-  add_gurobi_solver(gap = 0, verbose = FALSE)
+  add_gurobi_solver(gap = 0, verbose = FALSE) # with gurobi
 
 # or with cbc solver
 
@@ -403,7 +401,7 @@ p_FishPlanA <- problem(PUs, features = c("IBA", "IMMA", "NEIO_09", "NWIO_14", "S
   add_relative_targets(c(0.7, 0.3, 0.3, 0.3, 0.3, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.3, 0.3, 0.68, 0.3)) %>% #inactive vents target = 0.3, active vents  = 0.68, otherwise unfeasible
   add_binary_decisions() %>%
   add_locked_out_constraints(locked_out = "locked_out_areas") %>%
-  add_cbc_solver(gap = 0, verbose = TRUE)
+  add_cbc_solver(gap = 0, verbose = TRUE) # with cbc instead of gurobi, depending on your solver.
 
 p_FishPlanA_Sol <- solve(p_FishPlanA)
 
@@ -559,7 +557,7 @@ dfCross <- p_PlanFinal_Sol%>%
 
 ##' Sensitivity analysis
 ##' Sector-specific plans
-## Importance of each cons feat for the fishing plan
+## Importance of each conservsation feature for the fishing plan
 
 library(prioritizr)
 library(tidyverse)
@@ -1589,7 +1587,7 @@ create_corrmatrix <- function(list_plans) {
     as_tibble()
   colnames(s_matrix_all)[1:2] <- c('plan1','plan2')
   
-  write_csv(s_matrix_all, "~/Documents/MscThesis/GitHub/SpatialPlanning/s_matrix_all.csv")
+  write_csv(s_matrix_all, "~/Documents/SpatialPlanning/s_matrix_all.csv")
   
   matrix <- s_matrix_all %>% 
     as_tibble() %>% 
@@ -1915,8 +1913,8 @@ base_plot_5 <- PUs_plot + Contracts_plot + IMMA_plot + IBA_plot + EBSA_plot + Ve
 
 base_plot_5
 
-ggsave("pdfs/base_plot_5.jpeg", width = 15, height = 15, dpi = 1200)
-ggsave("pdfs/base_plot_5.jpg", width = 20, height = 15, dpi = 1200)
+#ggsave("pdfs/base_plot_5.jpeg", width = 15, height = 15, dpi = 1200)
+#ggsave("pdfs/base_plot_5.jpg", width = 20, height = 15, dpi = 1200)
 
 # cost layers
 
@@ -1927,8 +1925,8 @@ costs_full_2 <- fishing_plot + shipping_plot + mining_plot +
   theme(plot.tag = element_text(face = 'bold')) & 
   theme(legend.justification = "left")
 
-ggsave("pdfs/costs_full.jpeg", width = 15, height = 15, dpi = 1200)
-ggsave("pdfs/costs_full.jpg", width = 15, height = 15, dpi = 1200)
+#ggsave("pdfs/costs_full.jpeg", width = 15, height = 15, dpi = 1200)
+#ggsave("pdfs/costs_full.jpg", width = 15, height = 15, dpi = 1200)
 
 # sector-specific solutions
 
@@ -1938,8 +1936,8 @@ sol_rc_plots <- p_FishPlanA_Sol_Plot + rc_fish_plot + p_ShipPlanA_Sol_Plot + rc_
   theme(plot.tag = element_text(face = 'bold')) & 
   theme(legend.justification = "left")
 
-ggsave("pdfs/sol_rc_plots.jpeg", width = 15, height = 20, dpi = 1200)
-ggsave("pdfs/sol_rc_plots.jpg", width = 15, height = 20, dpi = 1200)
+#ggsave("pdfs/sol_rc_plots.jpeg", width = 15, height = 20, dpi = 1200)
+#ggsave("pdfs/sol_rc_plots.jpg", width = 15, height = 20, dpi = 1200)
 
 # circular barplot
 
@@ -2113,9 +2111,9 @@ temp7<- ggplot() +
   geom_sf(data = world_valid%>% rotate_data(), fill = "grey20", size = 0.05, show.legend = FALSE) +
   theme_void()
 
-##' THAT'S ALL
+##' THAT'S ALL for the basic analysis
 ##' 
-##' for the publication: One Earth modifs
+##' Modifications for publication with One Earth journal
 
 # completing the relative costs table
 
@@ -2163,13 +2161,14 @@ joined_all$union[joined_all$mining_sol == 'Selected' | joined_all$shipping_sol =
 length(joined_all$union[joined_all$union==1]) # 8084
 length(joined_all$union) # 33380
 
+## improve plot
 
 # cropping plot region
 
-Region <- c(xmin = 18, xmax = 120, ymin = -45, ymax = 25) #THIS IS WHERE I CROP YPUR AREA
+Region <- c(xmin = 18, xmax = 120, ymin = -45, ymax = 25) # area crop
 Bndry <- fSpatPlan_Get_Boundary(Region, cCRS) # boundary
 
-# adding % selected to plots
+# adding ' % selected as MPA' to plots
 
 fSolnText <- function(sDat, col_name) {    # fx for getting % selected PUs
   sDat <- sDat %>%    

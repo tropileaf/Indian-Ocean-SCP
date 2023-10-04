@@ -29,7 +29,7 @@ Conservation features:
 
 - IMMAs (https://www.marinemammalhabitat.org/immas/)
 
-- Deep-sea features (https://www.bluehabitats.org/) with hydrothermal vents: Beaulieu & Szafrański (2020).
+- Deep-sea features (https://www.bluehabitats.org/) with hydrothermal vents: Beaulieu & Szafrański (2020)
 
 
 Cost layers:

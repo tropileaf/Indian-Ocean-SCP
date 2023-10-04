@@ -1,8 +1,8 @@
 #' ---
 #' title: "Cross-sectoral spatial planning"
-#' author: "Lea Fourchault"
-#' affiliation: "UQ/CSIRO/UNSW/Tropimundo"
-#' date: "Last compiled on July 12th, 2022"
+#' authors: "Lea Fourchault, Jason D. Everett, Kristine C. V. Buenafe, Sandra Neubert, Alvise Dabala"
+#' affiliation: "UQ/CSIRO/UNSW/Tropimundo partner universities"
+#' date: "2023"
 #' output: 
 #'   html_document
 #' ---
@@ -14,9 +14,9 @@
 #' 
 #' The code depends on `sf`, `terra`, `tidyverse`, `rnaturalearth`, `prioritizr`, `stars`, `patchwork`, `exactextractr`.    
 #' 
-#' To use this code, you will need to download and expand `MME1DATA-Q1215/SpatialPlanning/Data.zip` to the directory `GitHub/SpatialPlanning/Data/`. Note that this version does not use Aquamaps.
+#' To use this code with Aquamaps, you will need to download and expand `MME1DATA-Q1215/SpatialPlanning/Data.zip` to the directory `GitHub/SpatialPlanning/Data/`. Note that this script no longer uses Aquamaps.
 #' 
-#' Contact: Lea Fourchault or Jason D. Everett or Kristine C. V. Buenafe from the MME at UQ.
+#' Contact: Lea Fourchault or Jason D. Everett or Kristine C. V. Buenafe from the Marine Mathematical Ecology at the University of Queensland.
 #' 
 #' ## Preliminaries 
 #' 
@@ -34,7 +34,7 @@ cCRS <- "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs" # Mol
 world <- ne_countries(scale = "medium", returnclass = "sf")%>%
   st_transform(cCRS) # apply Mollweide projection to background worldmap
 
-saveRDS(world, paste0("~/Documents/SpatialPlanning/rds", "world.rds"))
+#saveRDS(world, paste0("~/Documents/SpatialPlanning/rds", "world.rds"))
 
 Region <- c(xmin = 18, xmax = 120, ymin = -45, ymax = 34) # Indian Ocean, adjusted to include ecological data of interest and exclude low-quality fishing cost data
 Bndry <- fSpatPlan_Get_Boundary(Region, cCRS) # boundary of planning region
